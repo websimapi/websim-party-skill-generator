@@ -25,14 +25,16 @@ repositories {
     mavenCentral()
 
     maven {
-        url 'https://repo.runelite.net'
+        name = 'runelite'
+        url = 'https://repo.runelite.net'
     }
 }
 
 dependencies {
     // RuneLite API + Client
-    // Using a valid stable version found on repo.runelite.net
-    def runeliteVersion = '1.12.6'
+    // NOTE: If build fails finding these, check https://github.com/runelite/runelite/releases 
+    // for the latest version tag and update this variable.
+    def runeliteVersion = '1.11.12'
     
     compileOnly group: 'net.runelite', name: 'runelite-api', version: runeliteVersion
     compileOnly group: 'net.runelite', name: 'runelite-client', version: runeliteVersion
@@ -102,7 +104,17 @@ Tracks balloon pops to gain XP.
 6. The plugin should load immediately.
 
 ## Troubleshooting
-- **"Could not find method annotationProcessor"**: This means your Gradle is very old. We have removed Lombok to help with compatibility, but you should upgrade to Gradle 7+ for the best experience.
+
+### Build Failed: "Could not find net.runelite:runelite-client..."
+This means the version specified in \`build.gradle\` is either too old or temporarily unavailable.
+1. Visit [RuneLite Releases on GitHub](https://github.com/runelite/runelite/releases).
+2. Look for the latest release tag (e.g., \`runelite-parent-1.12.8\`).
+3. Open \`build.gradle\` in a text editor.
+4. Update the line \`def runeliteVersion = '1.11.12'\` to match the version you found (e.g., \`1.12.8\`).
+5. Run \`gradle clean build\` again.
+
+### Build Failed: "Could not find method annotationProcessor"
+This means your Gradle is very old. Upgrade to Gradle 7+ for the best experience.
 `;
 
 const configJava = `
