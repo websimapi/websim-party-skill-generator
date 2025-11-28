@@ -193,14 +193,13 @@ const overlayJava = `
 package com.party;
 
 import javax.inject.Inject;
-import net.runelite.client.ui.overlay.Overlay;
-import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayPanel;
-import net.runelite.client.ui.overlay.components.LineComponent;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import net.runelite.client.ui.overlay.OverlayPanel;
+import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.components.LineComponent;
 
-public class PartySkillOverlay extends Overlay
+public class PartySkillOverlay extends OverlayPanel
 {
     private final PartySkillPlugin plugin;
 
@@ -212,27 +211,30 @@ public class PartySkillOverlay extends Overlay
     }
 
     @Override
-    public Dimension render(Graphics2D g)
+    public Dimension render(Graphics2D graphics)
     {
         if (!plugin.getConfig().showOverlay())
-            return null;
-
-        return OverlayPanel.renderPanel(g, panel ->
         {
-            panel.getChildren().add(
-                LineComponent.builder()
-                    .left("Party XP:")
-                    .right(String.valueOf(plugin.getXP()))
-                    .build()
-            );
+            return null;
+        }
 
-            panel.getChildren().add(
-                LineComponent.builder()
-                    .left("Party Level:")
-                    .right(String.valueOf(plugin.getLevel()))
-                    .build()
-            );
-        });
+        panelComponent.getChildren().clear();
+
+        panelComponent.getChildren().add(
+            LineComponent.builder()
+                .left("Party XP:")
+                .right(String.valueOf(plugin.getXP()))
+                .build()
+        );
+
+        panelComponent.getChildren().add(
+            LineComponent.builder()
+                .left("Party Level:")
+                .right(String.valueOf(plugin.getLevel()))
+                .build()
+        );
+
+        return super.render(graphics);
     }
 }
 `;
