@@ -1,5 +1,15 @@
 import JSZip from "jszip";
-import { saveAs } from "file-saver";
+
+const saveAs = (blob, name) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
 
 // --- JAVA CODE TEMPLATES ---
 
