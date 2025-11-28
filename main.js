@@ -31,9 +31,11 @@ repositories {
 
 dependencies {
     // RuneLite API + Client
-    implementation group: 'net.runelite', name: 'client', version: '1.10.0'
-    compileOnly group: 'net.runelite', name: 'runelite-api', version: '1.10.0'
-    compileOnly group: 'net.runelite', name: 'runelite-client', version: '1.10.0'
+    // Using a valid stable version found on repo.runelite.net
+    def runeliteVersion = '1.10.36'
+    
+    compileOnly group: 'net.runelite', name: 'runelite-api', version: runeliteVersion
+    compileOnly group: 'net.runelite', name: 'runelite-client', version: runeliteVersion
 
     // SLF4J (Logging)
     compileOnly 'org.slf4j:slf4j-api:1.7.36'
