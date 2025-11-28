@@ -35,14 +35,13 @@ dependencies {
     compileOnly group: 'net.runelite', name: 'runelite-api', version: '1.10.0'
     compileOnly group: 'net.runelite', name: 'runelite-client', version: '1.10.0'
 
-    // Lombok support
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    // SLF4J (Logging)
+    compileOnly 'org.slf4j:slf4j-api:1.7.36'
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    options.release = 17   // RuneLite requires Java 17
+    options.release = 17
 }
 
 jar {
@@ -59,25 +58,31 @@ A RuneLite plugin that replaces the Sailing skill (24th slot) with a "Party" ski
 Tracks balloon pops to gain XP.
 
 ## Requirements
-- Java 17+ (JDK)
-- Gradle 7+
+- Java 17 (JDK)
+- Gradle 7+ (Recommended)
 
 ## Build Instructions (Terminal)
 
 1. Unzip the project.
 2. Open your terminal in the project folder.
-3. Run the build command:
+3. Check your gradle version:
+   \`\`\`bash
+   gradle -v
+   \`\`\`
+   *If your version is older than 7.0, you may encounter issues. Please update Gradle.*
+
+4. Run the build command:
    \`\`\`bash
    gradle clean build
    \`\`\`
    
-   *Note: If you need to force a specific Java version:*
+   *If you encounter "release version 17 not supported", ensure you are running with Java 17:*
    \`\`\`bash
    export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
    gradle clean build
    \`\`\`
 
-4. Verify the JAR file was created:
+5. Verify the JAR file was created:
    \`\`\`bash
    ls build/libs
    \`\`\`
@@ -92,16 +97,10 @@ Tracks balloon pops to gain XP.
 4. Click the **Load external plugin** button.
 5. Navigate to your build folder and select:
    \`build/libs/PartySkillPlugin-1.0.jar\`
-6. The plugin should load immediately. If not, check the side panel or restart RuneLite.
+6. The plugin should load immediately.
 
-## Usage
-1. Go to the Skills tab in game.
-2. Scroll down to the bottom right (Sailing slot).
-3. It should now show the Party icon.
-4. Pop balloons in-game to gain XP!
-   - Single: 3 XP
-   - Double: 6 XP
-   - Triple: 9 XP
+## Troubleshooting
+- **"Could not find method annotationProcessor"**: This means your Gradle is very old. We have removed Lombok to help with compatibility, but you should upgrade to Gradle 7+ for the best experience.
 `;
 
 const configJava = `
@@ -234,9 +233,9 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 @PluginDescriptor(
     name = "Party Skill",
     description = "Replaces Sailing skill with Balloon Popping virtual XP",
@@ -244,6 +243,8 @@ import lombok.extern.slf4j.Slf4j;
 )
 public class PartySkillPlugin extends Plugin
 {
+    private static final Logger log = LoggerFactory.getLogger(PartySkillPlugin.class);
+
     @Inject
     private Client client;
 
