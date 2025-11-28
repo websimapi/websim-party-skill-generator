@@ -32,7 +32,7 @@ repositories {
 dependencies {
     // RuneLite API + Client
     // Using a valid stable version found on repo.runelite.net
-    def runeliteVersion = '1.10.36'
+    def runeliteVersion = '1.12.6'
     
     compileOnly group: 'net.runelite', name: 'runelite-api', version: runeliteVersion
     compileOnly group: 'net.runelite', name: 'runelite-client', version: runeliteVersion
