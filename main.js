@@ -36,11 +36,18 @@ dependencies {
     // for the latest version tag and update this variable.
     def runeliteVersion = '1.11.12'
     
+    // 'runelite-api' is usually on Maven Central
     compileOnly group: 'net.runelite', name: 'runelite-api', version: runeliteVersion
-    compileOnly group: 'net.runelite', name: 'runelite-client', version: runeliteVersion
+    
+    // 'client' is hosted on repo.runelite.net (Artifact name is 'client', NOT 'runelite-client')
+    compileOnly group: 'net.runelite', name: 'client', version: runeliteVersion
 
     // SLF4J (Logging)
     compileOnly 'org.slf4j:slf4j-api:1.7.36'
+    
+    // Lombok (Standard for RuneLite plugins)
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 tasks.withType(JavaCompile) {
@@ -80,6 +87,11 @@ Tracks balloon pops to gain XP.
    gradle clean build
    \`\`\`
    
+   *If Gradle cannot find dependencies, force a redownload:*
+   \`\`\`bash
+   gradle clean build --refresh-dependencies
+   \`\`\`
+   
    *If you encounter "release version 17 not supported", ensure you are running with Java 17:*
    \`\`\`bash
    export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
@@ -105,13 +117,12 @@ Tracks balloon pops to gain XP.
 
 ## Troubleshooting
 
-### Build Failed: "Could not find net.runelite:runelite-client..."
-This means the version specified in \`build.gradle\` is either too old or temporarily unavailable.
-1. Visit [RuneLite Releases on GitHub](https://github.com/runelite/runelite/releases).
-2. Look for the latest release tag (e.g., \`runelite-parent-1.12.8\`).
-3. Open \`build.gradle\` in a text editor.
-4. Update the line \`def runeliteVersion = '1.11.12'\` to match the version you found (e.g., \`1.12.8\`).
-5. Run \`gradle clean build\` again.
+### Build Failed: "Could not find net.runelite:client..."
+This usually means the dependency artifact name or version is incorrect.
+1. This project uses \`name: 'client'\` which is correct for repo.runelite.net.
+2. If it fails, check [RuneLite Releases](https://github.com/runelite/runelite/releases) for the latest version tag (e.g., \`1.12.8\`).
+3. Update \`def runeliteVersion\` in \`build.gradle\`.
+4. Run \`gradle clean build --refresh-dependencies\`.
 
 ### Build Failed: "Could not find method annotationProcessor"
 This means your Gradle is very old. Upgrade to Gradle 7+ for the best experience.
