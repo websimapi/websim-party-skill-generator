@@ -13,29 +13,44 @@ const saveAs = (blob, name) => {
 
 // --- JAVA CODE TEMPLATES ---
 
-const buildGradle = `
-plugins {
+const buildGradle = `plugins {
     id 'java'
 }
+
+group = 'com.party'
+version = '1.0'
 
 repositories {
     mavenLocal()
     mavenCentral()
+
     maven {
-        url = 'https://repo.runelite.net'
+        url 'https://repo.runelite.net'
     }
 }
 
 dependencies {
-    compileOnly 'net.runelite:client:1.10.18' // Ensure version matches your client
+    // RuneLite API + Client
+    implementation group: 'net.runelite', name: 'client', version: '1.10.0'
+    compileOnly group: 'net.runelite', name: 'runelite-api', version: '1.10.0'
+    compileOnly group: 'net.runelite', name: 'runelite-client', version: '1.10.0'
+
+    // Lombok support
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
-    testImplementation 'junit:junit:4.12'
 }
 
-group = 'com.party'
-version = '1.0-SNAPSHOT'
-sourceCompatibility = '1.8'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.release = 17   // RuneLite requires Java 17
+}
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 `;
 
 const readme = `
@@ -43,16 +58,44 @@ const readme = `
 A RuneLite plugin that replaces the Sailing skill (24th slot) with a "Party" skill.
 Tracks balloon pops to gain XP.
 
-## Installation
+## Requirements
+- Java 17+ (JDK)
+- Gradle 7+
 
-1. Open this project in IntelliJ IDEA.
-2. Build the project using Gradle.
-3. Enable "Plugin Development" in RuneLite settings.
-4. Load the local plugin.
+## Build Instructions (Terminal)
 
-## How to use
+1. Unzip the project.
+2. Open your terminal in the project folder.
+3. Run the build command:
+   \`\`\`bash
+   gradle clean build
+   \`\`\`
+   
+   *Note: If you need to force a specific Java version:*
+   \`\`\`bash
+   export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+   gradle clean build
+   \`\`\`
 
-1. Go to the Skills tab.
+4. Verify the JAR file was created:
+   \`\`\`bash
+   ls build/libs
+   \`\`\`
+   You should see \`PartySkillPlugin-1.0.jar\`.
+
+## Installation in RuneLite
+
+1. Open RuneLite.
+2. Go to **Settings** (wrench icon) -> **Developer Tools**.
+   * If you don't see Developer Tools, enable it in the Plugin Hub or sidebar.
+3. Enable the **Plugin Development** setting.
+4. Click the **Load external plugin** button.
+5. Navigate to your build folder and select:
+   \`build/libs/PartySkillPlugin-1.0.jar\`
+6. The plugin should load immediately. If not, check the side panel or restart RuneLite.
+
+## Usage
+1. Go to the Skills tab in game.
 2. Scroll down to the bottom right (Sailing slot).
 3. It should now show the Party icon.
 4. Pop balloons in-game to gain XP!
